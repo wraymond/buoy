@@ -1,0 +1,64 @@
+---
+title: "Buoy_data_vis"
+author: "Wendel Raymond"
+date: "November 2, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# NOAA buoy data visulaization
+Data summaries and visualizations of NOAA buoy data
+
+libraries
+```{r lib}
+library(data.table)
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(clifro)
+
+theme_set(theme_classic())
+```
+
+## Data
+```{r data}
+## Get raw data  ##
+cflat <- fread("https://www.ndbc.noaa.gov/data/5day2/46087_5day.txt")
+cflat <- cflat[2:nrow(cflat),]
+colnames(cflat)[1] <- "YY"
+
+## Concatenate time ##
+cflat <- cflat %>% mutate_if(is.character, as.numeric)
+
+time.stamp <- cflat %>% 
+  select(YY, MM, DD, hh, mm) %>% 
+  mutate(time = make_datetime(YY, MM, DD, hh, mm))
+
+cflat <- cbind(cflat, time.stamp$time)
+colnames(cflat)[20] <- "time"
+```
+
+## Plots
+```{r}
+ggplot(cflat) +
+  geom_line(aes(x = time, y = WVHT), size = 1) +
+  scale_y_continuous(limits = c(0, max(cflat$WVHT)), breaks = seq(0, max(cflat$WVHT), by = max(cflat$WVHT) / 10))
+
+ggplot(cflat) +
+  geom_line(aes(x = time, y = MWD), size = 1) +
+  scale_y_continuous(limits = c(0, 360), breaks = seq(0, 360, by = 30))
+
+ggplot(cflat) +
+  geom_line(aes(x = time, y = APD), size = 1) +
+  scale_y_continuous(limits = c(0, max(cflat$APD)), breaks = seq(0, max(cflat$APD), by = max(cflat$APD) / 10))
+
+ggplot(cflat) +
+  geom_line(aes(x = time, y = DPD), size = 1) +
+  scale_y_continuous(limits = c(0, max(cflat$DPD)), breaks = seq(0, max(cflat$DPD), by = max(cflat$DPD) / 10))
+```
+
