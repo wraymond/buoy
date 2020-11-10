@@ -1,0 +1,13 @@
+name: David_Buoy
+title: David_Buoy
+username:
+account: wwraymond
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3196442
+bundleId: 3838835
+url: https://wwraymond.shinyapps.io/David_Buoy/
+when: 1604948836.75204
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app.R

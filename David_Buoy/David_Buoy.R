@@ -13,6 +13,9 @@ ui <- fluidPage(
    
    # Application title
    titlePanel("NOAA Buoy Data Visualizations"),
+   
+   # Select data range
+   
 
       # Show a plot of the generated distribution
       mainPanel(
