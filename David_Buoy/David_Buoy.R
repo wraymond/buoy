@@ -91,7 +91,6 @@ server <- function(input, output) {
      ggplot(data) +
        geom_line(aes(x = time, y = DPD, color = buoy), size = 1) +
        scale_x_datetime(labels = date_format("%m%d %H:%M"), date_breaks = "1 day") +
-       scale_y_continuous(limits = c(0, max(data$DPD)), breaks = seq(0, max(data$DPD), by = max(data$DPD) / 10)) +
        ylab("Dominant Wave Period (sec)") +
        xlab("Date") +
        theme(text = element_text(size = 20)) +
