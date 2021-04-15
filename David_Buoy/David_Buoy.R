@@ -28,17 +28,12 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   ## Get raw data  ##
-  cflat <- fread("https://www.ndbc.noaa.gov/data/5day2/46087_5day.txt")
-  cflat <- cflat[2:nrow(cflat),]
-  cflat$buoy <- "Cape Flattery"
-  colnames(cflat)[1] <- "YY"
-  
   angpt <- fread("https://www.ndbc.noaa.gov/data/5day2/46267_5day.txt")
   angpt <- angpt[2:nrow(angpt),]
   angpt$buoy <- "Angeles Point"
   colnames(angpt)[1] <- "YY"
 
-  data <- as.data.frame(rbind(cflat, angpt))
+  data <- as.data.frame(rbind(angpt))
   
   ## Concatenate time ##
   names <- data$buoy
