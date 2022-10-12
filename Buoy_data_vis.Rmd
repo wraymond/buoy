@@ -27,6 +27,9 @@ theme_set(theme_classic())
 ```
 
 ## Data
+
+46087 - Cape Flattery
+46267 - Angeles Point
 ```{r data}
 ## Get raw data  ##
 cflat <- fread("https://www.ndbc.noaa.gov/data/5day2/46087_5day.txt")
@@ -48,25 +51,42 @@ cflat$time <- as.POSIXct(cflat$time,  format = "%y%m%d %H:%M:%S", tz = "UTC")
 
 ### Convert time ###
 cflat$time <- with_tz(cflat$time, tzone = Sys.timezone())
+
+## Remove NA ##
+cflat <- cflat[!is.na(cflat$WVHT), ]
+cflat <- cflat[!is.na(cflat$DPD), ]
+
+## Trim data to last 48 hours ##
+cflat <- cflat %>% 
+  filter(time) 
 ```
 
 ## Plots
 ```{r}
 ggplot(cflat) +
   geom_line(aes(x = time, y = WVHT), size = 1) +
-  scale_x_datetime(labels = date_format("%m%d %H:%M"), date_breaks = "1 day") +
-  scale_y_continuous(limits = c(0, max(cflat$WVHT)), breaks = seq(0, max(cflat$WVHT), by = max(cflat$WVHT) / 10))
+  scale_x_datetime(labels = date_format("%m%d %H:%M"), date_breaks = "6 hour", date_labels = "%d-%m-%Y") +
+  scale_y_continuous(limits = c(0, max(cflat$WVHT)), breaks = seq(0, max(cflat$WVHT))) +
+  ylab("Wave height (ft)") +
+  xlab("Time")
 
 ggplot(cflat) +
   geom_line(aes(x = time, y = MWD), size = 1) +
-  scale_y_continuous(limits = c(0, 360), breaks = seq(0, 360, by = 30))
-
-cggplot(cflat) +
-  geom_line(aes(x = time, y = APD), size = 1) +
-  scale_y_continuous(limits = c(0, max(cflat$APD)), breaks = seq(0, max(cflat$APD), by = max(cflat$APD) / 10))
+  scale_y_continuous(limits = c(0, 360), breaks = seq(0, 360, by = 30)) +
+  geom_hline(aes(yintercept = 0)) +
+  geom_hline(aes(yintercept = 90)) +
+  geom_hline(aes(yintercept = 180)) +
+  geom_hline(aes(yintercept = 270)) +
+  geom_hline(aes(yintercept = 360)) +
+  geom_hline(aes(yintercept = 315), color = "red") +
+  ylab("Mean wave direction (degrees)") +
+  xlab("Time")
 
 ggplot(cflat) +
-  geom_line(aes(x = time, y = DPD), size = 1) +
-  scale_y_continuous(limits = c(0, max(cflat$DPD)), breaks = seq(0, max(cflat$DPD), by = max(cflat$DPD) / 10))
+  geom_line(aes(x = time, y = DPD), color = "black", size = 1) +
+  geom_line(aes(x = time, y = APD), color = "blue", size = 1) +
+  scale_y_continuous(limits = c(0, max(cflat$DPD)), breaks = seq(0, max(cflat$DPD))) +
+  ylab("Wave period (sec)") +
+  xlab("Time")
 ```
 
